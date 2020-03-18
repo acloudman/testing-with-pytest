@@ -1,5 +1,3 @@
-"""Main API for tasks project."""
-
 from collections import namedtuple
 from six import string_types
 
@@ -114,11 +112,11 @@ def start_tasks_db(db_path, db_type):  # type: (str, str) -> None
         raise TypeError('db_path must be a string')
     global _tasksdb
     if db_type == 'tiny':
-        from src.tasks import tasksdb_tinydb
-        _tasksdb = tasksdb_tinydb.start_tasks_db(db_path)
+        import src.tasks.tasksdb_tinydb
+        _tasksdb = src.tasks.tasksdb_tinydb.start_tasks_db(db_path)
     elif db_type == 'mongo':
-        from src.tasks import tasksdb_pymongo
-        _tasksdb = tasksdb_pymongo.start_tasks_db(db_path)
+        import src.tasks.tasksdb_pymongo
+        _tasksdb = src.tasks.tasksdb_pymongo.start_tasks_db(db_path)
     else:
         raise ValueError("db_type must be a 'tiny' or 'mongo'")
 

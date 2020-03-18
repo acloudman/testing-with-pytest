@@ -2,9 +2,9 @@
 
 from __future__ import print_function
 import click
-import tasks.config
+from src.tasks import config
 from contextlib import contextmanager
-from tasks.api import Task
+from src.tasks.api import Task
 
 
 # The main entry point for tasks.
@@ -21,7 +21,7 @@ def tasks_cli():
 def add(summary, owner):
     """Add a task to db."""
     with _tasks_db():
-        tasks.add(Task(summary, owner))
+        src.tasks.add(Task(summary, owner))
 
 
 @tasks_cli.command(help="delete a task")
@@ -29,7 +29,7 @@ def add(summary, owner):
 def delete(task_id):
     """Remove task in db with given id."""
     with _tasks_db():
-        tasks.delete(task_id)
+        src.tasks.delete(task_id)
 
 
 @tasks_cli.command(name="list", help="list tasks")
@@ -45,7 +45,7 @@ def list_tasks(owner):
     print(formatstr.format('ID', 'owner', 'done', 'summary'))
     print(formatstr.format('--', '-----', '----', '-------'))
     with _tasks_db():
-        for t in tasks.list_tasks(owner):
+        for t in src.list_tasks(owner):
             done = 'True' if t.done else 'False'
             owner = '' if t.owner is None else t.owner
             print(formatstr.format(
@@ -64,23 +64,23 @@ def list_tasks(owner):
 def update(task_id, owner, summary, done):
     """Modify a task in db with given id with new info."""
     with _tasks_db():
-        tasks.update(task_id, Task(summary, owner, done))
+        src.tasks.update(task_id, Task(summary, owner, done))
 
 
 @tasks_cli.command(help="list count")
 def count():
     """Return number of tasks in db."""
     with _tasks_db():
-        c = tasks.count()
+        c = src.tasks.count()
         print(c)
 
 
 @contextmanager
 def _tasks_db():
-    config = tasks.config.get_config()
-    tasks.start_tasks_db(config.db_path, config.db_type)
+    config = src.tasks.config.get_config()
+    src.tasks.start_tasks_db(config.db_path, config.db_type)
     yield
-    tasks.stop_tasks_db()
+    src.tasks.stop_tasks_db()
 
 
 if __name__ == '__main__':
